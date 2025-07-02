@@ -65,7 +65,10 @@ export const login = async(req,res)=>{
     try {
         const {email,password} = req.body
          const user = await  userModel.findOne({email})
-
+  // for chechking email and password available or not        
+ if (!email || !password) {
+      return res.status(400).json({ result: false, message: "email and password are required." });
+    }
          // for checking user already avlaible or not 
       if(!user){
       return  res.status(400).json({message:"You are not registered.",result:false})
@@ -76,10 +79,11 @@ export const login = async(req,res)=>{
         }
 
          const token = jwt.sign(
-      { id: user._id },
+      { id: user._id, email: user.email, uniqueName: user.uniqueName},
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
+    
     res.status(200).json({
         result : true,
         message : "User login successful",
@@ -87,8 +91,8 @@ export const login = async(req,res)=>{
         token : token
     }) 
 }catch(error){
-  
- res.status(500).json({ message: "Email and password are required.", error: error.message });   
+
+ res.status(400).json({ message: "Email and password are required.", error: error.message });   
 }
 
 }
