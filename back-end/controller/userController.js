@@ -68,7 +68,7 @@ export const login = async(req,res)=>{
 
          // for checking user already avlaible or not 
       if(!user){
-      return  res.status(400).json({message:"uYou are not registered.",result:false})
+      return  res.status(400).json({message:"You are not registered.",result:false})
       }
       const isPasswordCorrect  = bcrypt.compare(password,user.password)
       if (!isPasswordCorrect) {
@@ -87,7 +87,7 @@ export const login = async(req,res)=>{
         token : token
     }) 
 }catch(error){
- res.status(500).json({ message: "Login failed", error: error.message });   
+ res.status(500).json({ message: "Email and password are required.", error: error.message });   
 }
 
 }
