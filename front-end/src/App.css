@@ -1,0 +1,56 @@
+/* .css-18x6di2-MuiPaper-root-MuiDialog-paper{
+  max-width: 400px !important;
+  height: 100vh;
+  margin-left: 900px !important;
+} */
+
+.swiper-button-prev{
+  background-color: white;
+  border-radius: 100%;
+  padding: 25px !important;
+  transition: background-color 0.4s ease-in-out;
+  cursor: pointer;
+}
+
+.swiper-button-prev:hover{
+  background-color: red !important;
+}
+
+.swiper-button-prev:after{
+  font-size: 1.5rem !important;
+}
+
+.swiper-button-next{
+  background-color: white;
+  border-radius: 100%;
+  padding: 25px !important;
+  transition: background-color 0.4s ease-in-out;
+  cursor: pointer;
+}
+
+.swiper-button-next:hover{
+  background-color: red !important;
+}
+
+.swiper-button-next:after{
+  font-size: 1.5rem !important;
+}
+
+
+::-webkit-scrollbar{width: 8px !important; height: 8px !important;}
+
+::-webkit-scrollbar-track{ background:#ccc;}
+::-webkit-scrollbar-thumb{ background:#ff5252;}
+
+
+
+@media (max-width: 260px) {
+  .Hlogin{
+    margin-left: 100px;
+  }
+  .searchI{
+font-size: 10px;
+
+  }
+  
+}
