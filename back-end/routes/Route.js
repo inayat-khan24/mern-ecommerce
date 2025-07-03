@@ -3,7 +3,7 @@ import { login, singUp } from "../controller/userController.js"
 
 import { getAllproduct, productAdd } from "../controller/ProductController/ProductController.js"
 import upload from "../controller/ProductController/upload.js"
-import { addToCart, getcartproductbyid } from "../controller/cartController.js"
+import { addToCart, getcartproductbyid} from "../controller/cartController.js"
 
 
 export const router = express.Router()
