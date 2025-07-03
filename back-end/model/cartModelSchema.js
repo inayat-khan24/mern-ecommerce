@@ -14,10 +14,11 @@ const cartSchema = new mongoose.Schema({
         ref: "product",
         required: true,
       },
-      quantity: {
+        quantity: {
         type: Number,
         default: 1,
       },
+    
     },
   ],
 });
