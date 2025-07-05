@@ -4,6 +4,8 @@ import { login, singUp } from "../controller/userController.js"
 import { getAllproduct, productAdd } from "../controller/ProductController/ProductController.js"
 import upload from "../controller/ProductController/upload.js"
 import { addToCart, getcartproductbyid} from "../controller/cartController.js"
+import { createCategory, getAllCategories } from "../controller/ProductController/category.js"
+import { createSubCategory ,getAllSubCategories} from "../controller/ProductController/subcategoryController.js"
 
 
 export const router = express.Router()
@@ -22,7 +24,19 @@ router.post("/product_add",upload.array("productImage",5),productAdd)
 // fort get product
 router.get("/product_getall",getAllproduct)
 
-// cart API
+//add cart API
 router.post("/addtocart",addToCart)
-
+// get cart APi
 router.get("/getcartproductbyid",getcartproductbyid)
+
+// add category API
+router.post("/addcategory",createCategory)
+
+// get all categories
+router.get("/getAllCategories",getAllCategories)
+
+// add subcategories
+router.post("/addsubcategory",createSubCategory)
+
+// getsubcategory
+router.get("/getAllSubCategories",getAllSubCategories)

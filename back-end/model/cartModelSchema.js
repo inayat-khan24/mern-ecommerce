@@ -15,6 +15,10 @@ const cartSchema = new mongoose.Schema({
 }
   ],
   totalprince : Number
-});
+},
+{
+    timestamps: true,
+  }
+);
 
 export default mongoose.model("Cart", cartSchema);
