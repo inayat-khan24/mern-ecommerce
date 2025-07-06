@@ -1,7 +1,7 @@
 import express from "express"
 import {updateUserProfile, login, singUp,getUserDetails } from "../controller/userController.js"
 
-import { getAllproduct, productAdd,productdelete } from "../controller/ProductController/ProductController.js"
+import { getAllproduct, productAdd,productDelete} from "../controller/ProductController/ProductController.js"
 import upload from "../controller/ProductController/upload.js"
 import { addToCart, getcartproductbyid} from "../controller/cartController.js"
 import { createCategory, getAllCategories } from "../controller/ProductController/category.js"
@@ -25,7 +25,7 @@ router.post("/product_add",upload.array("productImage",5),productAdd)
 router.get("/product_getall",getAllproduct)
 
 // product delete
-router.post("/productdelete",productdelete)
+router.post("/productdelete",productDelete)
 
 //add cart API
 router.post("/addtocart",addToCart)
