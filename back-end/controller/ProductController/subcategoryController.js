@@ -56,7 +56,7 @@ export const getAllSubCategories = async (req, res) => {
     console.log(subcategories)
 
     res.status(200).json({
-      data
+    subcategories
     });
 
   } catch (error) {

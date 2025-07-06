@@ -97,6 +97,63 @@ export const login = async(req,res)=>{
 
 }
 
+export const getUserDetails = async(req,res)=>{
+  const { userId } = req.query
+ 
+  try {
+     if(!userId){
+    res.status(404).json({
+      result: false,
+  message: "userId query parameter is required"
+    })
+  }
+else{
+  const data = await userModel.findById(userId)
+  res.status(200).json({
+      result: true,
+  data
+    })
+}
+} catch (error) {
+    req.status(404).json({
+      message : error.message,
+      userId
+    })
+  }
+
+}
+
+export const updateUserProfile = async (req, res) => {
+  const userID = "68662c4266e3d4d9661430dc"; // 👈 hardcoded user ID
+  const updatedData = req.body; // 👈 updated fields from frontend/Postman
+
+  try {
+    const updatedUser = await userModel.findByIdAndUpdate(userID, updatedData, {
+      new: true, // return updated document
+      runValidators: true // validate according to schema
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      data: updatedUser
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Update failed",
+      error: error.message
+    });
+  }
+};
+
 
 
         
