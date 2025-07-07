@@ -1,134 +1,10 @@
-import Cart from "../model/cartModelSchema.js";
 import Product from "../model/productSchema.js";
+import { wishlistModel } from "../model/wishlistModelSchema.js";
 
 
 
-// export const addToCart = async (req, res) => {
-//   const { userId, productId, quantity } = req.body;
-
-
-
-//   if (!userId || !productId) {
-//     return res.status(400).json({ success: false, message: "userId and productId are required" });
-//   }
-
-//   try {
-//     const product = await Product.findById(productId);
-//     if (!product) return res.status(404).json({ success: false, message: "Product not found" });
-
-//     const productTotal = product.productPrice * (quantity || 1);
-
-//     let cart = await cartModelSchema.findOne({ userId });
-
-//     if (!cart) {
-//       cart = new cartModelSchema({
-//         userId,
-//         cartItems: [{
-//           productId,
-//           productName: product.productName,
-//           productImage: product.productImage,
-//           productPrice: product.productPrice,
-//           quantity: quantity || 1,
-//           total: productTotal
-//         }],
-//         totalPrice: productTotal
-//       });
-//     } else {
-//       const itemIndex = cart.cartItems.findIndex(item => item.productId.toString() === productId);
-
-//       if (itemIndex > -1) {
-//         // Update quantity and total
-//         cart.cartItems[itemIndex].quantity += quantity || 1;
-//         cart.cartItems[itemIndex].total = cart.cartItems[itemIndex].quantity * product.productPrice;
-//       } else {
-//         // Add new item
-//         cart.cartItems.push({
-//           productId,
-//           productName: product.productName,
-//           productImage: product.productImage,
-//           productPrice: product.productPrice,
-//           quantity: quantity || 1,
-//           total: productTotal
-//         });
-//       }
-
-//       // Update total cart price
-//       cart.totalPrice = cart.cartItems.reduce((sum, item) => sum + item.total, 0);
-//     }
-
-//     await cart.save();
-
-//     res.status(200).json({ success: true, message: "Product added to cart", cart });
-
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ success: false, message: "Internal server error" , error:err.message});
-//   }
-// };
-
-// export const getcartproductbyid = async (req, res) => {
-//   const { userId } = req.query;
-
-//   if (!userId) {
-//     return res.status(400).json({
-//       success: false,
-//       message: "userId is required"
-//     });
-//   }
-
-//   try {
-//     // we get cart product 
-//     const cart = await cartModelSchema.findOne({ userId });
-
-
-//     if (!cart || cart.cartItems.length === 0) {
-//       return res.status(200).json({
-//         success: true,
-//         message: "Cart is empty",
-//         cartItems: [],
-//         totalPrice: 0
-//       });
-//     }
-
-//     // Optional: ensure all productImage fields are strings
-//     const updatedCartItems = cart.cartItems.map(item => ({
-     
-//       productId: item.productId,
-//       productName: item.productName,
-//       productImage: item.productImage,
-//       productPrice: item.productPrice,
-//       quantity: item.quantity,
-//       total: item.total
-//     }));
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Cart fetched successfully",
-//       cartItems: updatedCartItems,
-//       totalPrice: cart.totalPrice
-//     });
-
-//   } catch (err) {
-//     res.status(500).json({
-//       success: false,
-//       message: "Internal server error",
-//       error: err.message
-//     });
-//   }
-// };
-
-
-
-
-
-
-
-
-
-// to fetch product details
-
-export const addToCart = async (req, res) => {
-  const { userId, productId, quantity } = req.body;
+export const addToWishlist = async (req, res) => {
+  const { userId, productId, } = req.body;
 
   if (!userId || !productId) {
     return res.status(400).json({
@@ -140,6 +16,7 @@ export const addToCart = async (req, res) => {
   try {
     // Step 1: Get product detail
     const product = await Product.findById(productId);
+       console.log(product.productName)
     if (!product) {
       return res.status(404).json({
         success: false,
@@ -147,62 +24,69 @@ export const addToCart = async (req, res) => {
       });
     }
 
-    // Ensure productImage is a flat array of strings
+    // Step 2: Flatten image array if needed
     const flatProductImage = Array.isArray(product.productImage)
       ? product.productImage.flat()
       : [];
 
-    // Step 2: Check if user already has a cart
-    let cart = await Cart.findOne({ userId });
+    // Step 3: Check if wishlist already exists
+    let wishList = await wishlistModel.findOne({ userId });
+ 
 
-    if (!cart) {
-      // Step 3: No cart — create new one
-      cart = new Cart({
+    if (!wishList) {
+      // Step 4: Create new wishlist
+      wishList = new wishlistModel({
         userId,
         items: [
           {
             productId,
             productName: product.productName,
             productImage: flatProductImage,
-            quantity: quantity || 1,
+            quantity : product.quantity,
             productPrice: product.productPrice,
-             
+            total: product.productPrice * quantity
           }
         ],
-        totalprince: product.productPrice * (quantity || 1)
+        totalprince: product.productPrice * quantity
       });
     } else {
-      // Step 4: Check if product already exists in cart
-      const existingIndex = cart.items.findIndex(
+      // Step 5: Update existing wishlist
+      const existingIndex = wishList.items.findIndex(
         item => item.productId === productId
       );
 
       if (existingIndex !== -1) {
-        // Product already in cart → increase quantity
-        cart.items[existingIndex].quantity += quantity || 1;
+        // Already in wishlist → update quantity and total
+        wishList.items[existingIndex].quantity += quantity;
+        wishList.items[existingIndex].total =
+          wishList.items[existingIndex].quantity *
+          wishList.items[existingIndex].productPrice;
       } else {
-        // Add new product to cart (image was missing here!)
-        cart.items.push({
+        // Not in wishlist → add new item
+        wishList.items.push({
           productId,
           productName: product.productName,
-          productImage: flatProductImage, // ✅ Add image here too
-          quantity: quantity || 1,
-          productPrice: product.productPrice
+          productImage: flatProductImage,
+          quantity,
+          productPrice: product.productPrice,
+          total: product.productPrice * quantity
         });
       }
 
-      // Step 5: Update total price
-      cart.totalprince = cart.items.reduce((total, item) => {
-        return total + item.quantity * item.productPrice;
+      // Recalculate total price
+      wishList.totalprince = wishList.items.reduce((total, item) => {
+        return total + item.total;
       }, 0);
     }
 
-    await cart.save();
+    // Save updated wishlist
+    await wishList.save();
 
     res.status(200).json({
       success: true,
-      message: "Product added to cart",
-      cart
+      message: "Product added to wishlist successfully.",
+      addedProductName: product.productName,
+      totalProductsInCart: wishList.items.length
     });
 
   } catch (err) {
@@ -213,62 +97,3 @@ export const addToCart = async (req, res) => {
     });
   }
 };
-
-
-
-export const getcartproductbyid = async (req, res) => {
-  const { userId } = req.query;
-
-  if (!userId) {
-    return res.status(400).json({
-      success: false,
-      message: "userId is required"
-    });
-  }
-
-  try {
-    // we get cart product 
-    const cart = await Cart.findOne({ userId });
-
-
-    if (!cart || cart.items.length === 0) {
-      return res.status(200).json({
-        success: true,
-        message: "Cart is empty",
-        cartItems: [],
-        totalPrice: 0
-      });
-    }
-console.log(cart)
-    // Optional: ensure all productImage fields are strings
-    const updatedCartItems = cart.items.map(item => ({
-     
-      productId: item.productId,
-      productName: item.productName,
-      productImage: item.productImage,
-      productPrice: item.productPrice,
-      quantity: item.quantity,
-      total: item.totalprince
-    }));
-
-    res.status(200).json({
-      success: true,
-      message: "Cart fetched successfully",
-      cartItems: updatedCartItems,
-      totalprince : cart.totalprince
-    });
-
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: err.message
-    });
-  }
-};
-
-
-
-
-
-

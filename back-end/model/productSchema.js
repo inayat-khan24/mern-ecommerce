@@ -29,6 +29,12 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required:  true
   },
+
+   productRating : {
+    type: Number,
+    
+  },
+
   productImage: {
     // type : String,
     type: [String], 

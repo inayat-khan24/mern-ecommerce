@@ -6,6 +6,7 @@ import upload from "../controller/ProductController/upload.js"
 import { addToCart, getcartproductbyid} from "../controller/cartController.js"
 import { createCategory, getAllCategories } from "../controller/ProductController/category.js"
 import { createSubCategory ,getAllSubCategories} from "../controller/ProductController/subcategoryController.js"
+import { addToWishlist } from "../controller/wishlistController.js"
 
 
 export const router = express.Router()
@@ -31,6 +32,9 @@ router.post("/productdelete",productDelete)
 router.post("/addtocart",addToCart)
 // get cart APi
 router.get("/getcartproductbyid",getcartproductbyid)
+
+// add wishlist
+router.post("/addToWishlist",addToWishlist)
 
 // add category API
 router.post("/addcategory",createCategory)

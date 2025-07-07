@@ -8,6 +8,7 @@ const cartSchema = new mongoose.Schema({
   items : [
 {productId : String,
  productName: String,
+  productDescription : String,
  productImage: [String],
   quantity: Number,
   productPrice: Number,
@@ -21,4 +22,4 @@ const cartSchema = new mongoose.Schema({
   }
 );
 
-export default mongoose.model("wishlist", cartSchema);
+export const wishlistModel = mongoose.model("wishlist", cartSchema);

@@ -10,6 +10,7 @@ export const productAdd =  async(req,res)=>{
       productDescription,
       productPrice,
       productCategory,
+      productRating,
       productSubCategory,
       productStock,
       productQuantity} = req.body;
@@ -28,6 +29,7 @@ export const productAdd =  async(req,res)=>{
        productName,
       productDescription,
       productPrice,
+      productRating,
       productCategory,
       productSubCategory,
       productStock,
