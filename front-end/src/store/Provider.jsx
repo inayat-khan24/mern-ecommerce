@@ -31,7 +31,7 @@ const Provider = ({ children }) => {
   const [items,setItems] = useState([])
    const fetchDetails = async()=>{
    try {
-     const res = await fetch("http://157.66.191.24:4447/api/product_getall")
+     const res = await fetch("https://mern-ecommerce-n4t6.onrender.com/api/product_getall")
      const result = await res.json()
     
      setItems(result.data)
@@ -209,7 +209,7 @@ try {
   // fetch cart list 
   const cartListFetch = async()=>{
    try {
-  const res = await fetch(`http://157.66.191.24:4447/api/getcartproductbyid?userId=${userID }`,{
+  const res = await fetch(`https://mern-ecommerce-n4t6.onrender.com/api/getcartproductbyid?userId=${userID }`,{
     headers :{
     Authorization: `Bearer ${token}`,
     }
@@ -246,7 +246,7 @@ setWishList(cartsData)
 useEffect(()=>{
     wishListFetch()
   },[])
-console.log("store")
+
 
 // filter method 
 const [catFilter,setCatfilter] = useState("")

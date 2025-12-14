@@ -3,6 +3,7 @@ import { handleError, handleSuccess } from "../component/notifiction";
 import { ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../store/create";
+import { login } from "../APi/Api";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -17,20 +18,18 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://157.66.191.24:4447/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const result = await response.json();
+      const response = await login(formData)
+      console.log(response.data)
+     
       const { status } = response;
-      const { message, token } = result;
+      const { message, token } = response.data;
+      
       if (status === 200) {
         handleSuccess(message);
         localStorage.setItem("token", token);
-        localStorage.setItem("email", result.data.email);
-        localStorage.setItem("userName", result.data.userName);
-        localStorage.setItem("userID", result.data._id);
+        localStorage.setItem("email", response.data.email);
+        localStorage.setItem("userName", response.data.userName);
+        localStorage.setItem("userID", response.data._id);
         setIsLogin(true);
         setTimeout(() => navigate("/"), 1000);
       } else {

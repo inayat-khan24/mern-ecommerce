@@ -1,6 +1,8 @@
 import Cart from "../model/cartModelSchema.js";
 import Product from "../model/productSchema.js";
 
+
+// add cart data 
 export const addToCart = async (req, res) => {
   const { userId, productId, quantity } = req.body;
 
@@ -96,6 +98,7 @@ export const addToCart = async (req, res) => {
   }
 };
 
+// get cart data 
 export const getcartproductbyid = async (req, res) => {
   const { userId } = req.query;
 
@@ -146,6 +149,120 @@ export const getcartproductbyid = async (req, res) => {
     });
   }
 };
+
+// delete cart
+export const removeFromCart = async (req, res) => {
+  const { userId, productId } = req.body;
+
+  try {
+    if(!userId || !productId){
+      res.status(404).json({
+            message: "userId and productId are required"
+      })
+    }
+    const cart = await Cart.findOne({ userId });
+    console.log(cart)
+    if (!cart) {
+      return res.status(404).json({ success: false, message: "cart not found" });
+    }
+
+    cart.items = cart.items.filter(item => item.productId !== productId);
+
+    // Recalculate total price
+    cart.totalprince = cart.items.reduce((acc, item) => acc + item.total, 0);
+
+    await cart.save();
+    const updatedCartItems = cart.items.map(item => ({
+     
+      productId: item.productId,
+      productName: item.productName,
+      
+      productPrice: item.productPrice,
+      quantity: item.quantity,
+       _id : item?. _id.toString()
+      
+    }));
+    
+
+    res.status(200).json({ result: true,
+       message: "cart item removed successfully", 
+           _id : cart?._id,
+       userId : cart.userId,
+       items : {updatedCartItems},
+       totalprince : cart.totalprince
+       });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Internal server error", error: err.message });
+  }
+};
+
+// update updateQuantity
+export const updateQuantity = async (req, res) => {
+  const { userId, productId, quantity } = req.body;
+  console.log({ userId, productId, quantity });
+
+  try {
+    //  Validate input
+    if (!userId || !productId || typeof quantity !== "number" || quantity < 1) {
+      return res.status(400).json({
+        result: false,
+        message: "userId, productId, and numeric quantity are required"
+      });
+    }
+
+    //  Find cart
+    const cart = await Cart.findOne({ userId });
+    if (!cart) {
+      return res.status(404).json({ result: false, message: "Cart not found" });
+    }
+
+    // Find the item inside the cart
+    const itemIndex = cart.items.findIndex(item => item.productId === productId);
+
+    if (itemIndex === -1) {
+      return res.status(404).json({ result: false, message: "Product not found in cart" });
+    }
+
+    //  Update quantity and total
+    cart.items[itemIndex].quantity = quantity;
+    cart.items[itemIndex].total = cart.items[itemIndex].productPrice * quantity;
+
+    // Update total cart price
+    cart.totalprince = cart.items.reduce((sum, item) => sum + item.total, 0);
+
+    //  Save changes
+    await cart.save();
+
+    res.status(200).json({
+      result: true,
+      message: "Cart updated successfully",
+      
+      items: {
+   productId : cart.items[itemIndex].productId,
+   quantity : cart.items[itemIndex].quantity,
+   productPrice : cart.items[itemIndex].productPrice,
+   productName : cart.items[itemIndex].productName,
+    _id : cart.items[itemIndex]?._id,
+  },
+    
+totalPrice : cart.totalprince,
+updatedAt : cart.updatedAt,
+__v  : cart?.__v
+
+
+
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      result: false,
+      message: "Internal server error",
+      error: error.message
+    });
+  }
+};
+
+
 
 
 

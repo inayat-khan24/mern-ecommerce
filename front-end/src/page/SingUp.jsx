@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../component/notifiction.jsx";
+import { signUp } from "../APi/Api.js";
+
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -22,27 +24,19 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (formData.password !== formData.conformPassword) {
       handleError("Passwords do not match!");
       return;
     }
 
     try {
-      const response = await fetch("http://157.66.191.24:4447/api/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const result = await response.json();
+      const response = await signUp(formData); // yaha API call
+      handleSuccess(response.data.message);
 
-      if (response.status === 200) {
-        handleSuccess(result.message);
-        setTimeout(() => navigate("/login"), 1000);
-      } else {
-        handleError(result.message || "Error signing up");
-      }
+      setTimeout(() => navigate("/login"), 1000);
     } catch (error) {
-      handleError("Error submitting form");
+      handleError(error.response?.data?.message || "Error signing up");
       console.error(error.message);
     }
 
@@ -62,7 +56,9 @@ const SignUp = () => {
         <h1 className="text-3xl font-extrabold text-center text-blue-800 mb-2">
           Create Account
         </h1>
-        <p className="text-center text-sm text-gray-600 mb-6">Sign up to get started</p>
+        <p className="text-center text-sm text-gray-600 mb-6">
+          Sign up to get started
+        </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {[

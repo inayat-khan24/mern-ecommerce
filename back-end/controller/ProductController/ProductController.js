@@ -2,10 +2,11 @@ import Product from "../../model/productSchema.js";
 
 
 // add product 
-export const productAdd =  async(req,res)=>{
- try {
-    console.log(req.file)
-     const {
+export const productAdd = async (req, res) => {
+  try {
+    console.log(req.files); // Ye me Cloudinary ke URL show honge
+
+    const {
       productName,
       productDescription,
       productPrice,
@@ -13,20 +14,15 @@ export const productAdd =  async(req,res)=>{
       productRating,
       productSubCategory,
       productStock,
-      productQuantity} = req.body;
+      productQuantity,
+    } = req.body;
 
+    // Direct Cloudinary URLs from multer-storage-cloudinary
+    const productImages = req.files.map(file => file.path);
 
-
-    // { if we want only uplload single image
-    //  const productImage = req.file ? `${req.file.filename}` : '';
-    //  }
-
-       const productImages = req.files.map(file => file.filename) || [];
-   
-
-
+    // Save product in MongoDB
     const newProduct = new Product({
-       productName,
+      productName,
       productDescription,
       productPrice,
       productRating,
@@ -34,20 +30,24 @@ export const productAdd =  async(req,res)=>{
       productSubCategory,
       productStock,
       productQuantity,
-      productImage: productImages
+      productImage: productImages,
     });
 
     const savedProduct = await newProduct.save();
 
     return res.status(201).json({
-     result: true,
-     message: "Products fetched successfully",
-      data : [savedProduct]
+      result: true,
+      message: "Product added successfully",
+      data: [savedProduct],
     });
   } catch (error) {
-   return res.status(400).json({ result: false, message: "Product add failed", error: error.message });
+    return res.status(400).json({
+      result: false,
+      message: "Product add failed",
+      error: error.message,
+    });
   }
-}
+};
 
 // get all product
 export const getAllproduct = async (req, res) => {

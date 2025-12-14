@@ -1,23 +1,26 @@
 import multer from "multer";
-import path from "path";
-import fs from "fs";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 
-// Ensure uploads folder exists
-const uploadPath = "uploads/";
-if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath, { recursive: true });
-}
+import dotenv from 'dotenv';
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadPath);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
+dotenv.config();
+// 🔹 Cloudinary config (ye env se lena best practice hai)
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const upload = multer({ storage: storage });
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "ecommerce_upload", // folder name in Cloudinary
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    
+  },
+});
 
-export default upload;
+
+
+ export const productupload = multer({ storage });

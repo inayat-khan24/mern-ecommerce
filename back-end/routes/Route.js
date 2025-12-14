@@ -2,11 +2,12 @@ import express from "express"
 import {updateUserProfile, login, singUp,getUserDetails } from "../controller/userController.js"
 
 import { getAllproduct, productAdd,productDelete} from "../controller/ProductController/ProductController.js"
-import upload from "../controller/ProductController/upload.js"
-import { addToCart, getcartproductbyid} from "../controller/cartController.js"
+
+import { addToCart, getcartproductbyid, removeFromCart, updateQuantity} from "../controller/cartController.js"
 import { createCategory, getAllCategories } from "../controller/ProductController/category.js"
 import { createSubCategory ,getAllSubCategories} from "../controller/ProductController/subcategoryController.js"
-import { addToWishlist } from "../controller/wishlistController.js"
+import { addToWishlist, getWishlist, removeWishlistItem } from "../controller/wishlistController.js"
+import { productupload } from "../ProductController/upload.js"
 
 
 export const router = express.Router()
@@ -15,14 +16,16 @@ router.post("/signup",singUp)
 
 router.post("/login",login)
 
-router.post("/product_add",upload.array("productImage",5),productAdd)
+
+// add product Api
+router.post("/product_add",productupload.array("productImage",5),productAdd)
 
 //! {
 // if we only upload single image without array thne use upload.single 
 // router.post("/product_add",upload.single("productImage"),productAdd)
 //! }
 
-// fort get product
+// fort getAll product
 router.get("/product_getall",getAllproduct)
 
 // product delete
@@ -33,8 +36,19 @@ router.post("/addtocart",addToCart)
 // get cart APi
 router.get("/getcartproductbyid",getcartproductbyid)
 
+// delete cart 
+router.delete("/removeFromCart",removeFromCart)
+
+// update qunity
+router.put("/updateQuantity",updateQuantity)
+
 // add wishlist
 router.post("/addToWishlist",addToWishlist)
+// get wishlist 
+router.get("/getWishlist",getWishlist)
+
+// delete wishlist
+router.delete("/removeWishlistItem",removeWishlistItem)
 
 // add category API
 router.post("/addcategory",createCategory)

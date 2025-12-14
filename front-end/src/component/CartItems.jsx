@@ -56,7 +56,7 @@ getSelected,quantity
          QtyUpdate(_id,value)
         }
 
-       
+      
         
       };
 

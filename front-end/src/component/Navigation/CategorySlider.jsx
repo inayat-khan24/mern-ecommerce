@@ -46,7 +46,7 @@ const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const fetchCategory = async () => {
     try {
       const res = await fetch(
-        "http://157.66.191.24:4447/api/getAllCategories"
+        "https://mern-ecommerce-n4t6.onrender.com/api/getAllCategories"
       )
       const result = await res.json()
       
