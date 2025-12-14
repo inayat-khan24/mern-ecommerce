@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://mern-ecommerce-n4t6.onrender.com", // apna backend ka baseURL
+  // baseURL: "https://mern-ecommerce-n4t6.onrender.com", // apna backend ka baseURL
+
+  baseURL: "http://localhost:30045",
 });
 
 // Agar har request me token bhejna ho to

@@ -31,17 +31,8 @@ const SignUp = () => {
     }
 
     try {
-<<<<<<< HEAD
       const response = await signUp(formData); // yaha API call
       handleSuccess(response.data.message);
-=======
-      const response = await fetch("http://localhost:30045/api/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const result = await response.json();
->>>>>>> 10c68e4ec69c205fb8436ee6b7b33814985bde2e
 
       setTimeout(() => navigate("/login"), 1000);
     } catch (error) {

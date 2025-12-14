@@ -11,12 +11,12 @@ const MyAccount = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
    const userId = localStorage.getItem("userID");
     const token = localStorage.getItem("token");
-
+const API_BASE_URL = "http://localhost:30045";
 
   const fetchUserInfo = async () => {
    
     try {
-      const res = await fetch(`http://157.66.191.24:4447/api/getUserDetails?userId=${userId}`);
+      const res = await fetch(`${API_BASE_URL}/api/getUserDetails?userId=${userId}`);
       const result = await res.json();
       setUserInfo(result.data);
     
@@ -46,7 +46,7 @@ const MyAccount = () => {
     
     setIsSubmitting(true);
     try {
-      const res = await fetch(`http://157.66.191.24:4447/api/updateUserProfile`, {
+      const res = await fetch(`${API_BASE_URL}/api/updateUserProfile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

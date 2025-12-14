@@ -26,7 +26,7 @@ const ProductDetailsComponent = () => {
       <section className="part1 w-full md:w-1/3 flex justify-center">
         <img
           className="rounded-lg object-cover max-w-full h-auto shadow-md"
-         src={`https://mern-ecommerce-n4t6.onrender.com/api/getAllCategories/uploads/${product.productImage}`}
+         src={`http://157.66.191.24:4447/uploads/${product.productImage}`}
           alt="Cycle"
         />
       </section>

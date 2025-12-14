@@ -7,6 +7,9 @@ import Button from "@mui/material/Button";
 const CategorySlider = () => {
   const [slidBox, setSlidBox] = useState(10);
   const [categoryList, setCategoryList] = useState([]);
+  const [loader,setLoader] = useState(false)
+
+ 
 
   // 🔥 Resize logic fixed (no dependency loop)
   useEffect(() => {
@@ -29,37 +32,26 @@ const CategorySlider = () => {
 
   // 🔥 API call (runs only once)
   const fetchCategory = async () => {
+    setLoader(true)
     try {
-<<<<<<< HEAD
       const res = await fetch(
-        "https://mern-ecommerce-n4t6.onrender.com/api/getAllCategories"
+        `http://localhost:30045/api/getAllCategories`
       )
       const result = await res.json()
       
-      setCategoryList(result)
-=======
-      const res = await fetch("http://localhost:30045/api/getAllCategories");
-      const result = await res.json();
-
-      // IMPORTANT FIX: Ensure result is an array
-      if (Array.isArray(result)) {
-        setCategoryList(result);
-      } else if (Array.isArray(result.data)) {
-        setCategoryList(result.data);
-      } else {
-        console.log("Invalid API format:", result);
-        setCategoryList([]);
-      }
->>>>>>> 10c68e4ec69c205fb8436ee6b7b33814985bde2e
+      setCategoryList(result.data)
+      setLoader(false)
     } catch (error) {
       console.log("Category Fetch Error:", error);
     }
   };
 
+
+
   useEffect(() => {
     fetchCategory();
   }, []);
-
+if(loader) <div>loading... </div>
   return (
     <div>
       <Swiper spaceBetween={-160} slidesPerView={slidBox}>
