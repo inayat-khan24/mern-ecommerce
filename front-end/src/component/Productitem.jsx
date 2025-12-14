@@ -49,7 +49,7 @@ const context = useContext(ThemeContext)
         <Link to="/">
             <div className="img  overflow-hidden">
             <img 
-            src={`http://157.66.191.24:4447/uploads/${productImage}`}
+            src={`${productImage}`}
             className='w-full object-contain
             mt-5
             h-48
@@ -58,7 +58,7 @@ const context = useContext(ThemeContext)
             alt="" />
             
              <img 
-              src={`http://157.66.191.24:4447/uploads/${productImage}`}
+              src={`${productImage}`}
             className='w-full object-cover
              
              transition-all duration-900 absolute top-0 left-0 opacity-0 

@@ -67,7 +67,7 @@ getSelected,quantity
     <div className="img w-[15%] rounded-md overflow-hidden"> 
       <Link to="/product/78745" className='group'>
       <img
-      src={`http://157.66.191.24:4447/uploads/${productImage}`}
+      src={`${productImage}`}
       alt="" className='w-full group-hover:scale-105 transition-all'/>
       </Link>
     </div>

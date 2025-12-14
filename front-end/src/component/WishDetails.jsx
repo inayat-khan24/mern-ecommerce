@@ -18,7 +18,7 @@ const {selectedQty,DeleteWishItems} = useContext(ThemeContext)
             <div className="img w-[10%] overflow-hidden h-[80px] rounded-md">
                 <Link to="/product/45875" className='block group'>
                 <img 
-                src={`http://157.66.191.24:4447/uploads/${productImage}`}
+                src={`${productImage}`}
                  alt="" className='w-full group-hover:scale-105' />   
                  </Link>
             </div>

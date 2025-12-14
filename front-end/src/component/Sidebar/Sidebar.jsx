@@ -29,7 +29,7 @@ const size = ["Small (17)","Medium (10)","Large (25)","XL (1)","XXL (3)"]
   const fetchCategory = async () => {
     try {
       const res = await fetch(
-        "http://157.66.191.24:4447/api/getAllSubCategories"
+        "http://localhost:30045/api/getAllSubCategories"
       )
       const result = await res.json()
 

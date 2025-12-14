@@ -25,12 +25,12 @@ const {addCart,catFilter,setCatfilter} = useContext(ThemeContext)
         <Link to="/">
             <div className="img  overflow-hidden">
             <img 
-           src={`http://157.66.191.24:4447/uploads/${productImage}`}
+           src={`${productImage}`}
             className='w-full '
             alt="" />
             
              <img 
-            src={`http://157.66.191.24:4447/uploads/${productImage}`}
+            src={`${productImage}`}
             className='w-full transition-all duration-700 absolute top-0 left-0 opacity-0 group-hover:opacity-100 group-hover:scale-105' 
             alt="" />
             </div>

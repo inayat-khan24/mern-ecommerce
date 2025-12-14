@@ -25,7 +25,7 @@ const  FilterProductDetail = ({filteredProducts}) => {
       <section className="part1 w-full md:w-1/3 flex justify-center">
         <img
           className="rounded-lg object-cover max-w-full h-auto shadow-md"
-         src={`http://157.66.191.24:4447/uploads/${product.productImage}`}
+         src={`${product.productImage}`}
           alt="Cycle"
         />
       </section>

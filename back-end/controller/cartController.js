@@ -161,7 +161,7 @@ export const removeFromCart = async (req, res) => {
       })
     }
     const cart = await Cart.findOne({ userId });
-    console.log(cart)
+    
     if (!cart) {
       return res.status(404).json({ success: false, message: "cart not found" });
     }
@@ -199,7 +199,7 @@ export const removeFromCart = async (req, res) => {
 // update updateQuantity
 export const updateQuantity = async (req, res) => {
   const { userId, productId, quantity } = req.body;
-  console.log({ userId, productId, quantity });
+  
 
   try {
     //  Validate input

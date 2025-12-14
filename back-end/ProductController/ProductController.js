@@ -2,7 +2,7 @@ import Product from "../../model/productSchema.js";
 
 export const productAdd =  async(req,res)=>{
  try {
-    console.log(req.file)
+
      const {
       productName,
       productDescription,
