@@ -18,9 +18,18 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+<<<<<<< HEAD
       const response = await login(formData)
       console.log(response.data)
      
+=======
+      const response = await fetch("http://localhost:30045/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const result = await response.json();
+>>>>>>> 10c68e4ec69c205fb8436ee6b7b33814985bde2e
       const { status } = response;
       const { message, token } = response.data;
       

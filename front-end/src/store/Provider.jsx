@@ -31,10 +31,14 @@ const Provider = ({ children }) => {
   const [items,setItems] = useState([])
    const fetchDetails = async()=>{
    try {
+<<<<<<< HEAD
      const res = await fetch("https://mern-ecommerce-n4t6.onrender.com/api/product_getall")
+=======
+     const res = await fetch("http://localhost:30045/api/product_getall")
+>>>>>>> 10c68e4ec69c205fb8436ee6b7b33814985bde2e
      const result = await res.json()
     
-     setItems(result.data)
+     setItems(result.getproduct)
      setIsLoading(false)
      
    } catch (error) {
@@ -69,7 +73,7 @@ const Provider = ({ children }) => {
 
   
 try {
-      const res = await axios.post('http://157.66.191.24:4447/api/addtocart', addCart,{
+      const res = await axios.post('http://localhost:30045/api/addtocart', addCart,{
         
     headers: {
       Authorization: `Bearer ${Token}`,
@@ -106,7 +110,7 @@ else if(res.status === 400){
 }
   
 try {
-      const res = await axios.post('http://157.66.191.24:4447/api/addToWishlist', wishPost,{
+      const res = await axios.post('http://localhost:30045/api/addToWishlist', wishPost,{
         
     headers: {
       Authorization: `Bearer ${Token}`,
@@ -144,7 +148,7 @@ try {
     }
    
     try {
-       await axios.delete("http://157.66.191.24:4447/api/removeFromCart",{     
+       await axios.delete("http://localhost:30045/api/removeFromCart",{     
     headers: {
       Authorization: `Bearer ${token}`},
     data: userDelete,
@@ -167,7 +171,7 @@ try {
    
     try {
     const res = await axios.put(
-      "http://157.66.191.24:4447/api/updateQuantity",
+      "http://localhost:30045/api/updateQuantity",
       productQty,             // ye data hai
       {
         headers: {
@@ -191,7 +195,7 @@ try {
   "userId": userID
     }
     try {
-      const res = await axios.delete("http://157.66.191.24:4447/api/removeWishlistItem",{     
+      const res = await axios.delete("http://localhost:30045/api/removeWishlistItem",{     
     headers: {
       Authorization: `Bearer ${token}`},
     data: userDelete,
@@ -209,7 +213,11 @@ try {
   // fetch cart list 
   const cartListFetch = async()=>{
    try {
+<<<<<<< HEAD
   const res = await fetch(`https://mern-ecommerce-n4t6.onrender.com/api/getcartproductbyid?userId=${userID }`,{
+=======
+  const res = await fetch(`http://localhost:30045/api/getcartproductbyid?userId=${userID }`,{
+>>>>>>> 10c68e4ec69c205fb8436ee6b7b33814985bde2e
     headers :{
     Authorization: `Bearer ${token}`,
     }
@@ -231,12 +239,13 @@ try {
   const wishListFetch = async()=>{
    
 try {
-  const res = await fetch(`http://157.66.191.24:4447/api/getWishlist?userId=${userID}`,{
+  const res = await fetch(`http://localhost:30045/api/getWishlist?userId=${userID}`,{
     headers :{
     Authorization: `Bearer ${token}`,
     }
   })
 const result = await res.json()
+console.log("hello")
 const cartsData = result?.data
 setWishList(cartsData)
   } catch (error) {
