@@ -124,8 +124,9 @@ else{
 }
 
 export const updateUserProfile = async (req, res) => {
-  const userID = "68662c4266e3d4d9661430dc"; // 👈 hardcoded user ID
+  const userID = req.body.userId 
   const updatedData = req.body; // 👈 updated fields from frontend/Postman
+  console.log(res.body)
 
   try {
     const updatedUser = await userModel.findByIdAndUpdate(userID, updatedData, {

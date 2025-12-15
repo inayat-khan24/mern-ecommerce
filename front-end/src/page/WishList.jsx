@@ -10,6 +10,7 @@ const WishList = () => {
   }, []);
 
   const wishlistP = wishlist || [];
+  console.log(wishlistP)
   const Totalprice = wishlistP.reduce(
     (acc, curr) => acc + curr?.productId?.productPrice,
     0

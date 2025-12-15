@@ -153,7 +153,7 @@ const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
-      console.log(width)
+     
      if(width <= 1039){
       setFilterSlider(false)
      }else{

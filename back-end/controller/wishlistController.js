@@ -7,7 +7,7 @@ import { wishlistModel } from "../model/wishlistModelSchema.js";
 //  Add product to wishlist
 export const addToWishlist = async (req, res) => {
   const { userId, productId, quantity = 1 } = req.body;
-  console.log(productId)
+  
   if (!userId || !productId) {
     return res.status(400).json({ success: false, message: "userId and productId are required" });
   }

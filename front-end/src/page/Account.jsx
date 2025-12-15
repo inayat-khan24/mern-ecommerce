@@ -11,6 +11,7 @@ const MyAccount = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
    const userId = localStorage.getItem("userID");
     const token = localStorage.getItem("token");
+
 const API_BASE_URL = "http://localhost:30045";
 
   const fetchUserInfo = async () => {
@@ -63,7 +64,7 @@ const API_BASE_URL = "http://localhost:30045";
       
       const result = await res.json();
       console.log(result)
-      if (result.result === "true") {
+      if (result.success === true) {
         handleSuccess("Profile updated successfully!");
         fetchUserInfo();
         setEditField(null);

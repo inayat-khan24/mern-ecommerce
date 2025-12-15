@@ -20,16 +20,16 @@ const Login = () => {
     try {
       const response = await login(formData)
       console.log(response.data)
-     
+     console.log("email",response.data.data)
       const { status } = response;
       const { message, token } = response.data;
       
       if (status === 200) {
         handleSuccess(message);
         localStorage.setItem("token", token);
-        localStorage.setItem("email", response.data.email);
-        localStorage.setItem("userName", response.data.userName);
-        localStorage.setItem("userID", response.data._id);
+        localStorage.setItem("email", response.data.data.email);
+        localStorage.setItem("userName", response.data.data.userName);
+        localStorage.setItem("userID", response.data.data._id);
         setIsLogin(true);
         setTimeout(() => navigate("/"), 1000);
       } else {
