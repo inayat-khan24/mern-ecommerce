@@ -1,39 +1,29 @@
-import React from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import Button from '@mui/material/Button';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
+import { NavLink } from 'react-router-dom';
 import { ThemeContext } from '../../store/create';
 
-const Category = ({ categoryName,categoryID}) => {
-const {catFilter,setCatfilter}= useContext(ThemeContext)
-
-const handleCategory = (id)=>{
-  setCatfilter(id)
-}
-
-
-
+const Category = ({ categoryName, categoryID }) => {
+  const { setCatfilter } = useContext(ThemeContext);
 
   return (
-    <li className="list-none relative group ">
-      <NavLink to={`/productListing/${categoryName}`}
-      //  className="link transition text-[14px] font-[500]"
-       className={({ isActive }) =>  isActive
-            ? "text-blue-600   font-bold border-b-2 border-red-600 py-3 "
-            : "text-gray-600 hover:text-blue-500"
-        }
-       >
-       <Button
-  onClick={() => handleCategory(categoryID)}
-  className="w-[100px] h-[60px]  !text-black font-medium text-sm whitespace-normal text-center break-words p-2 mx-2 hover:text-[#ff5252] transition-all"
->
-  {categoryName}
-</Button>
-         
+    <div 
+      className="inline-block"
+      onClick={() => setCatfilter(categoryID)}
+    >
+      <NavLink
+        to={`/productListing/${categoryName}`}
+        className={({ isActive }) => `
+          block px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-300 border
+          ${isActive 
+            ? "bg-[#ff5252] text-white border-[#ff5252] shadow-md" 
+            : "bg-white text-gray-600 border-transparent hover:bg-gray-100 hover:text-[#ff5252]"
+          }
+        `}
+      >
+        {categoryName}
       </NavLink>
-
-    </li>
-  )
-}
+    </div>
+  );
+};
 
 export default Category;

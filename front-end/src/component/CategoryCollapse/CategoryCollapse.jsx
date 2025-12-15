@@ -1,224 +1,88 @@
-import React, {  useState } from 'react'
-import { Link } from 'react-router-dom'
-import Button from '@mui/material/Button';
+import React, { useEffect, useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import Button from "@mui/material/Button";
 import { FaRegSquarePlus } from "react-icons/fa6";
-import { FiMinusSquare } from 'react-icons/fi';
+import { FiMinusSquare } from "react-icons/fi";
 
 const CategoryCollapse = () => {
-    const [submenuIndex,setSubmenuIndex] = useState(null)
-    const [innerSubmenuIndex,setInnerSubmenuIndex] = useState(null)
+  const [submenuIndex, setSubmenuIndex] = useState(null);
+  const [categoryList, setCategoryList] = useState([]);
+  const [loader, setLoader] = useState(false);
 
- 
+  const fetchCategory = async () => {
+    setLoader(true);
+    try {
+      const res = await fetch(
+        "http://localhost:30045/api/getAllSubCategories"
+      );
+      const result = await res.json();
+      setCategoryList(result.subcategories);
+    } catch (error) {
+      console.log("Category Fetch Error:", error);
+    } finally {
+      setLoader(false);
+    }
+  };
 
-    // for Submenu function
-  const openSubmenu=(index)=>{
-    if (submenuIndex === index ) {
-      setSubmenuIndex(null)
-    }else{
-    
-      setSubmenuIndex(index)
-    }
-    
-    }
-    // for inner - Submenu function
-const openInnerSubmenu=(index)=>{
-    if (innerSubmenuIndex === index ) {
-      setInnerSubmenuIndex(null)
-    }else{
-    
-      setInnerSubmenuIndex(index)
-    }
-    
-    }
-  
+  useEffect(() => {
+    fetchCategory();
+  }, []);
+
+  // 🔹 Group categories
+  const groupedCategories = categoryList.reduce((acc, item) => {
+    const categoryName = item.categoryId.categoryName;
+    if (!acc[categoryName]) acc[categoryName] = [];
+    acc[categoryName].push(item);
+    return acc;
+  }, {});
+
+  if (loader) return <div>Loading...</div>;
+
   return (
-     
-<div className="scroll">
-      <ul className='w-full'>
-  <li className='list-none flex items-center relative flex-col'>
-    <Link to="/" className='w-full'>
-           <Button className='w-full !text-left !justify-start !px-3 !text-[rgba(0,0,0,0.8)]'> 
-            Fashion
-            </Button>
-            </Link>
-            {/* plus and manas function for Submenu     */}
-{
-    submenuIndex ===0 ? <FiMinusSquare  className='absolute top-[10px] right-[15px] cursor-pointer' 
-    onClick={()=>openSubmenu(0)}
-    /> 
-    :
-    <FaRegSquarePlus className='absolute top-[10px] right-[15px] cursor-pointer' 
-          onClick={()=>openSubmenu(0)}
-          />
-    }
-
-        
-
-          {
-            submenuIndex === 0 && 
-            <ul className="submenu  w-full pl-3 ">
-                      <li className='list-none relative'>
-                        <Link to="/" className='w-full'>
-                      <Button className='w-full !text-left !justify-start !px-3 !text-[rgba(0,0,0,0.8)]'> 
-                        Apparel
-                        </Button>
-                        </Link>
-                  {/* plus and manas function for innerSubmenu     */}
-                        {
-    innerSubmenuIndex ===0 ? <FiMinusSquare  className='absolute top-[10px] right-[15px] cursor-pointer' 
-    onClick={()=>openInnerSubmenu(0)}
-    /> 
-    :
-    <FaRegSquarePlus className='absolute top-[10px] right-[15px] cursor-pointer' 
-          onClick={()=>openInnerSubmenu(0)}
-          />
-    }
-
-
-{/* // inner submenu */}
-
-{
-
-innerSubmenuIndex === 0 && 
-
-
+    <div className="scroll">
+      <ul className="w-full">
+        {Object.keys(groupedCategories).map((category, index) => (
+          <li key={index} className="list-none relative">
             
-<ul className="inner_submenu  w-full pl-3 ">
-<li className='list-none relative mb-1'>
-    <Link to="/" className='link w-full !text-left !justify-start !px-3 
-  transition text-[14px]'> 
-    Smart Tablet
-    </Link>
-</li>
+            {/* Category Link */}
+            <NavLink to={`/productListing/${category}`}>
+              <Button className="w-full !text-left !justify-start !px-3">
+                {category}
+              </Button>
+            </NavLink>
 
-<li className='list-none relative mb-1'>
-    <Link to="/" className='link w-full !text-left !justify-start !px-3 
-  transition text-[14px]'> 
-    Crepe T-Shirt 
-    </Link>
-</li>
-
-
-<li className='list-none relative mb-1'>
-    <Link to="/" className='link w-full !text-left !justify-start !px-3 
-  transition text-[14px]'> 
-    Leather Watch
-    </Link>
-</li>
-
-<li className='list-none relative mb-1'>
-    <Link to="/" className='link w-full !text-left !justify-start !px-3 
-  transition text-[14px]'> 
-    Rolling Daimond
-    </Link>
-</li>
-
-
-
-
-</ul>
-
-}
-
-            
-            
-            
-            
-                        
-                              </li>
-                          </ul>
-
-
-          }
-
-          </li>
-
-
-{/* second part */}
-<li className='list-none flex items-center relative flex-col'>
-    <Link to="/" className='w-full'>
-           <Button className='w-full !text-left !justify-start !px-3 !text-[rgba(0,0,0,0.8)]'> 
-            Outerwear
-            </Button>
-            </Link>
-            {/* plus and manas function for Submenu     */}
-{
-    submenuIndex === 1 ? <FiMinusSquare  className='absolute top-[10px] right-[15px] cursor-pointer' 
-    onClick={()=>openSubmenu(1)}
-    /> 
-    :
-    <FaRegSquarePlus className='absolute top-[10px] right-[15px] cursor-pointer' 
-          onClick={()=>openSubmenu(1)}
-          />
-    }
-
-        
-
-          { submenuIndex === 1 && (
-                     <ul className="submenu  w-full pl-3 ">
-                      <li className='list-none relative'>
-                        <Link to="/" className='w-full'>
-                      <Button className='w-full !text-left !justify-start !px-3 !text-[rgba(0,0,0,0.8)]'> 
-                        Apparel
-                        </Button>
-                        </Link>
-                  {/* plus and manas function for innerSubmenu     */}
-            { innerSubmenuIndex ===1 ? (<FiMinusSquare  className='absolute top-[10px] right-[15px] cursor-pointer' 
-              onClick={()=>openInnerSubmenu(1)}
-                /> 
-            ):(
-            <FaRegSquarePlus className='absolute top-[10px] right-[15px] cursor-pointer' 
-              onClick={()=>openInnerSubmenu(1)}
-          />
-                 )}
-
-
-{/* // inner submenu                */}
-
-{innerSubmenuIndex === 1 &&  (
-    <ul className="inner_submenu  w-full pl-3 ">
-    <li className='list-none relative mb-1'>
-        <Link to="/" className='link w-full !text-left !justify-start !px-3 
-    transition text-[14px]'> 
-        Smart Tablet
-        </Link>
-    </li>
-
-    <li className='list-none relative mb-1'>
-        <Link to="/" className='link w-full !text-left !justify-start !px-3 
-    transition text-[14px]'> 
-        Crepe T-Shirt 
-        </Link>
-    </li>
-
-
-    <li className='list-none relative mb-1'>
-        <Link to="/" className='link w-full !text-left !justify-start !px-3 
-    transition text-[14px]'> 
-        Leather Watch
-        </Link>
-    </li>
-
-    <li className='list-none relative mb-1'>
-        <Link to="/" className='link w-full !text-left !justify-start !px-3 
-    transition text-[14px]'> 
-        Rolling Daimond
-        </Link>
-              </li>
-            </ul>
+            {/* Plus / Minus Toggle */}
+            {submenuIndex === index ? (
+              <FiMinusSquare
+                className="absolute top-[10px] right-[15px] cursor-pointer"
+                onClick={() => setSubmenuIndex(null)}
+              />
+            ) : (
+              <FaRegSquarePlus
+                className="absolute top-[10px] right-[15px] cursor-pointer"
+                onClick={() => setSubmenuIndex(index)}
+              />
             )}
-           </li>
-        </ul>
-          )}
 
+            {/* Subcategories */}
+            {submenuIndex === index && (
+              <ul className="pl-5">
+                {groupedCategories[category].map((sub) => (
+                  <li key={sub._id}>
+                    <Link to={`/category/${sub.subCategoryName}`}>
+                      <Button className="w-full !text-left !justify-start !px-3">
+                        {sub.subCategoryName}
+                      </Button>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </li>
-{/* second part end */}
+        ))}
       </ul>
-   </div>     
+    </div>
+  );
+};
 
-
-
-  )
-}
-
-export default CategoryCollapse
+export default CategoryCollapse;

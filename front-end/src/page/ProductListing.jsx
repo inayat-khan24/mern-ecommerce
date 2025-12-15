@@ -1,438 +1,303 @@
-import React, { useContext, useEffect, useState } from 'react'
-import Navigation from '../component/Navigation'
+import React, { useContext, useEffect, useState, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Link from '@mui/material/Link'; 
+// MUI Imports
+import { 
+  Typography, Breadcrumbs, Link, Button, Menu, MenuItem, 
+  Pagination, Dialog, DialogContent, Tooltip, useMediaQuery, Box 
+} from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
-import Button  from '@mui/material/Button';
-import { IoGridSharp } from "react-icons/io5";
+// Icons
+import { IoGridSharp, IoCloseSharp } from "react-icons/io5";
 import { LuMenu } from "react-icons/lu";
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
-import Sidebar from '../component/Sidebar/Sidebar';
-import Productitem from '../component/Productitem';
-import { ThemeContext } from '../store/create';
-import ProductitemListView from '../component/ProductitemListView/ProductitemListView';
-import { Alert, Dialog, DialogContent, Tooltip } from '@mui/material';
-import { IoCloseSharp } from "react-icons/io5";
-import FilterProductDetail from '../component/filterProductDetail';
 import { RiMenu2Fill } from 'react-icons/ri';
 import { LiaAngleDownSolid } from 'react-icons/lia';
+
+// Context & Components
+import Navigation from '../component/Navigation';
+import Sidebar from '../component/Sidebar/Sidebar';
+import Productitem from '../component/Productitem';
+import ProductitemListView from '../component/ProductitemListView/ProductitemListView';
 import CategoryPanelProduct from '../component/ProductList_Navigation/CategoryPanelProduct';
+import FilterProductDetail from '../component/filterProductDetail';
+import { ThemeContext } from '../store/create';
 
-const ProductListing = () => {
- const {filteredProductsS,searchBox,values,
-  items,handleCategory,catFilter,setItems,fullWidth,maxWidth} = useContext(ThemeContext)
- const [openProductDetailsModel, setOpenProductDetailsModel] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [shortBy,setShortBy]= useState("high to low")
-const handleCloseProductDetailsModel = () => {
-    setOpenProductDetailsModel(false);
-  }; 
-  const [filteredProducts, setFilteredProducts] = useState(items);
-
-  // for product filter
-  const [isOpenCatpanel,setIsOpenCatpanel] = useState(false)
-
-
-
- useEffect(() => {
-    let updatedProducts = [...items];
-    
-
-    // Category filter
-    if (catFilter) {
-      updatedProducts = updatedProducts.filter(
-        (product) => product.productCategory === catFilter
-        
-      );
-     
-    }
-
-    // Search filter
-    if (searchBox.trim()) {
-      updatedProducts = updatedProducts.filter((product) =>
-        product.productName.toLowerCase().includes(searchBox.toLowerCase())
-      );}
-
-      // selected sub cetagory
-  if (selectedCategories.length > 0) {
-  updatedProducts = updatedProducts.filter(
-    (product) => selectedCategories.includes(product.productSubCategory)
-  );
-}
-// Convert sort option string (like "Highest to Lowest") to a consistent format
-const sortByKey = shortBy.trim().replace(/\s+/g, '').toLowerCase();
-
-if (sortByKey === "highesttolowest") {
-  
-  updatedProducts = updatedProducts.sort((a, b) => b.productPrice - a.productPrice);
-}
-
-
-if (sortByKey === "lowtohigh") {
-  updatedProducts = updatedProducts.sort((a, b) => a.productPrice - b.productPrice);
-}
-
-if (sortByKey === "atoz") {
-  updatedProducts = updatedProducts.sort((a, b) => a.productName.localeCompare(b.productName));
-}
-
-if (sortByKey === "ztoa") {
-  updatedProducts = updatedProducts.sort((a, b) => b.productName.localeCompare(a.productName));
-}
- 
-if (values){
-
-  updatedProducts = updatedProducts.filter(price => price.productPrice  >= values[0] && price.productPrice  <= values[1]);
-
-}
-  
-  
-
-    setFilteredProducts(updatedProducts);
-  }, [searchBox, catFilter, items,selectedCategories,shortBy,values]);
-  
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleCategoryClick = (categoryId) => {
-    setSelectedCategory(categoryId === selectedCategory ? '' : categoryId);
-  };
-
- 
-
-
-
-
-   const [itemView,setItemView] = useState('grid');
-   
-    const [anchorEl, setAnchorEl] = useState(null)
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-
-  };
-  const handleClose = (e) => {
-    setAnchorEl(null);
-    setShortBy(e)
-  };
-
-  // page ination 
-   
-   const [page, setPage] = useState(1);
-   const [itemsPerPage,setitemsPerPage] = useState(4)
-  
-
-  // index calculate
-  const indexOfLastItem = page * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-
-const handleChange = (event, value) => {
-  setPage(value); 
-  console.log("Selected Page:", value);
+// --- Helper: Sort Logic ---
+const sortProducts = (products, sortKey) => {
+  const sorted = [...products];
+  switch (sortKey.replace(/\s+/g, '').toLowerCase()) {
+    case 'lowtohigh': return sorted.sort((a, b) => a.productPrice - b.productPrice);
+    case 'hightolow': return sorted.sort((a, b) => b.productPrice - a.productPrice);
+    case 'atoz': return sorted.sort((a, b) => a.productName.localeCompare(b.productName));
+    case 'ztoa': return sorted.sort((a, b) => b.productName.localeCompare(a.productName));
+    default: return sorted; // Relevance
+  }
 };
 
-// fiter panel
- const [isOpenCatpanelFilter,setIsOpenCatpanelFilter] = useState(false)
- const [filterSlider,setFilterSlider] = useState(true)
- const openCategorypanelFilter =()=>{
-  setIsOpenCatpanelFilter(true);}
+const ProductListing = () => {
+  const theme = useTheme();
+  // Use MUI hook for responsiveness instead of manual window listeners
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md')); 
 
+  // --- Context Data ---
+  const { 
+    searchBox, values, items, catFilter, 
+    fullWidth, maxWidth 
+  } = useContext(ThemeContext);
 
-const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-  const [slidBox, setSlidBox] = useState(10);
+  
 
+  // --- Local State ---
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+  const [sortBy, setSortBy] = useState("Relevance");
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  
+  // Pagination
+  const [page, setPage] = useState(1);
+  const itemsPerPage = viewMode === 'list' ? 5 : 8; // Dynamic per page based on view
 
-  useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-     
-     if(width <= 1039){
-      setFilterSlider(false)
-     }else{
-      setFilterSlider(true)
-     }
+  // Modals / Drawers
+  const [openProductDetailsModel, setOpenProductDetailsModel] = useState(false);
+  const [isOpenCatpanelFilter, setIsOpenCatpanelFilter] = useState(false);
+  
+  // Sort Menu State
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openSortMenu = Boolean(anchorEl);
+
+  // --- Filtering Logic (useMemo) ---
+  // This automatically recalculates whenever dependencies change, no useEffect needed.
+  const filteredProducts = useMemo(() => {
+    let result = [...items];
+
+    // 1. Global Search
+    if (searchBox?.trim()) {
+      result = result.filter((p) => 
+        p.productName.toLowerCase().includes(searchBox.toLowerCase())
+      );
     }
 
-    // Initial check
-    handleResize();
+    // 2. Main Category Filter
+    if (catFilter) {
+      result = result.filter((p) => p.productCategory === catFilter);
+    }
 
-    // Listen for resize
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [filterSlider]);
+    // 3. Sub-Category Filter (Sidebar)
+    if (selectedCategories.length > 0) {
+      result = result.filter((p) => selectedCategories.includes(p.productSubCategory));
+    }
 
+    // 4. Price Range Filter
+    if (values) {
+      result = result.filter(p => p.productPrice >= values[0] && p.productPrice <= values[1]);
+    }
 
+    // 5. Sorting
+    return sortProducts(result, sortBy);
+
+  }, [items, searchBox, catFilter, selectedCategories, values, sortBy]);
+
+  // --- Pagination Logic ---
+  const count = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = useMemo(() => {
+    const start = (page - 1) * itemsPerPage;
+    return filteredProducts.slice(start, start + itemsPerPage);
+  }, [filteredProducts, page, itemsPerPage]);
+
+  // --- Handlers ---
+  const handleSortClick = (event) => setAnchorEl(event.currentTarget);
+  
+  const handleSortClose = (option) => {
+    setAnchorEl(null);
+    if (option) setSortBy(option);
+  };
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
-    
-    <>
-    <div
-     className='container   w-[50%] min-w-[100%] bg-[#e7e2e2] pb-2 flex flex-col *
-     items-center justify-center
-     '>
-
-{/* NavBar section */}
-      <section className='mt-2  w-[98%] bg-white'>
-        <Navigation />
+    <div className='w-full bg-[#f4f5f7] min-h-screen pb-10'>
+      
+      {/* 1. Navbar */}
+      <section className='bg-white shadow-sm'>
+        <div className="container mx-auto">
+          <Navigation />
+        </div>
       </section>
 
-{/* braad section*/}
-      <section className='w-[98%] py-3'>
-         <div className='container pl-4'>
-              {/* braad crumbs added */}           
-      <Breadcrumbs aria-label="breadcrumb">
-        <Link 
-        underline="hover" 
-        color="inherit" 
-        href="/"
-        className='link transition'
-        >
-             Home
-        </Link>
-        <Link
-          underline="hover"
-          color="inherit"
-          href="/"
-          className='link transition'
-        >
-          Fashion
-        </Link>       
-      </Breadcrumbs>
-        </div>
-    {/* braad crumbs ended */}
-</section>
- {/* productDetail section */}
- <section className='w-[98%] bg-white'>
-  <div className='bg-white p-2 mt-4'>
-             <div className="container flex gap-3">    
-{/* //Shop by Category,Shop by Category,Size      */}
+      {/* 2. Breadcrumbs */}
+      <div className='container mx-auto px-4 py-4'>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Link underline="hover" color="inherit" href="/">Home</Link>
+          <Link underline="hover" color="inherit" href="/fashion">Fashion</Link>
+          <Typography color="text.primary">Products</Typography>
+        </Breadcrumbs>
+      </div>
 
- {
-filterSlider?(
-<div className="sidebarWraper w-[20%] h-full bg-white ">
+      {/* 3. Main Content Layout */}
+      <section className='container mx-auto px-4'>
+        <div className='flex flex-col md:flex-row gap-6'>
+
+          {/* --- Left Sidebar (Filters) --- */}
+          <div className='w-full md:w-[25%] lg:w-[20%]'>
+            {isDesktop ? (
+              <div className="bg-white rounded-lg shadow-sm overflow-hidden h-fit sticky top-4">
                 <Sidebar 
-                setSelectedCategories={setSelectedCategories}
-                selectedCategories={selectedCategories}/>
-            </div>  
-)
-: (
-  <>
-   <div className="col_1  w-[14%]  max-sm:w-full]">
-            <Button className='!text-black !text-[0.5rem] !font-[600] gap-2  w-full'
-           onClick={openCategorypanelFilter}
-            >
-                <RiMenu2Fill  className='text-[18px]'/> filter Products 
-                <LiaAngleDownSolid className='text-[13px] pl-1 font-bold'/> </Button>
-        </div>
-  <CategoryPanelProduct  isOpenCatpanelFilter={isOpenCatpanelFilter} 
-setIsOpenCatpanelFilter={setIsOpenCatpanelFilter}
-/>
-  </>
-  
+                  setSelectedCategories={setSelectedCategories}
+                  selectedCategories={selectedCategories}
+                />
+              </div>
+            ) : (
+              // Mobile Filter Toggle
+              <Button 
+                variant="contained"
+                color="inherit"
+                className='w-full !justify-between !bg-white !text-black !py-2'
+                onClick={() => setIsOpenCatpanelFilter(true)}
+              >
+                <span className='flex items-center gap-2'>
+                  <RiMenu2Fill /> Filters
+                </span>
+                <LiaAngleDownSolid />
+              </Button>
+            )}
 
-)
-}
+            {/* Mobile Filter Drawer */}
+            {!isDesktop && (
+              <CategoryPanelProduct 
+                isOpenCatpanelFilter={isOpenCatpanelFilter} 
+                setIsOpenCatpanelFilter={setIsOpenCatpanelFilter}
+              />
+            )}
+          </div>
 
-
-
+          {/* --- Right Content (Product Grid) --- */}
+          <div className='w-full md:w-[75%] lg:w-[80%]'>
             
-            
-
-            <div className='rightContent w-[80%] py-3'>
-                <div className='bg-[#f1f1f1] p-2 w-full mb-4 rounded-md flex items-center justify-between'>
-                    <div className="col1 flex items-center itemViewActions">
-                        {/* menu list button */}
-        <Tooltip title="List">
-                              <Button
-                     className={`!w-[40px] !h-[40px] ${itemView=="list"&&"!bg-[#ec4444] !text-white"} !min-w-[40px] !rounded-full !text-[#000] 
-                      ${itemView=="list"&&"active"}`}
-                       onClick={()=>{
-                        setItemView('list'); 
-                        setitemsPerPage(3);
-                        } }> 
-                            <LuMenu className='text[rgba(0,0,0,0.7)]' /> 
-                        </Button>
-          </Tooltip>
-                        {/* grid button */}
-          <Tooltip title="grid">             
-                        <Button className={`!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] 
-                      ${itemView=="grid"&&"!bg-[#ec4444] !text-white"}`}
-                          onClick={()=>{setItemView('grid');
-                            setitemsPerPage(4);
-                          }}> 
-                            <IoGridSharp className='text[rgba(0,0,0,0.7)]' /> 
-                        </Button>
-          </Tooltip>  
-                        <span className='text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]'>{`There are ${filteredProducts.length} products.`}</span>
-                    </div>
-
-
-                    
-                    {/* Short By */}
-                    <div className="col2 ml-auto flex items-center justify-end gap-3 pr-4">
-                      <span className='text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]'>Short By</span>
-                      {/* menu button  */}
-                      <Button
-                                id="basic-button"
-                                aria-controls={open ? 'basic-menu' : undefined}
-                                aria-haspopup="true"
-                                aria-expanded={open ? 'true' : undefined}
-                                onClick={handleClick}
-                                className='!bg-white !text-[12px] !text-[#000] !capitalize !border-2 !border-[#000]'
-                            >
-                                {shortBy}
-                    </Button>
-
-
-
-                        {/* menu  */}
-                        <Menu
-                                id="basic-menu"
-                                anchorEl={anchorEl}
-                                open={open}
-                                onClose={handleClose}
-                                MenuListProps={{
-                                'aria-labelledby': 'basic-button',
-                                }}
-                        >
-                                
-                                <MenuItem
-                                 onClick={()=>handleClose("Relevance")}
-                                 className='!bg-white !text-[13px] !text-[#000] !capitalize ' >Relevance</MenuItem>
-                                <MenuItem
-                                onClick={()=>handleClose("A to Z")}
-                                 className='!bg-white !text-[13px] !text-[#000] !capitalize ' 
-                                 > A to Z</MenuItem>
-                                <MenuItem 
-                                onClick={()=>handleClose("Z to A")}
-                                  className='!bg-white !text-[13px] !text-[#000] !capitalize'  >Z to A</MenuItem>
-                                <MenuItem onClick={()=>handleClose("low to high")}
-                                    className='!bg-white !text-[13px] !text-[#000] !capitalize' value="Price, low to high" >low to high</MenuItem>
-                                <MenuItem onClick={()=>handleClose("high to low")}
-                                   className='!bg-white !text-[13px] !text-[#000] !capitalize' value="Price, high to low" >high to low</MenuItem>
-                                
-                                
-                        </Menu>
-
-
-                    </div>
-                </div>
-{/* // this is grid produt */}
-                <div className={`grid ${itemView==='grid'?'grid-cols-4 max-sm:grid-cols-3 md:grid-cols-4':'grid-cols-1 md:grid-cols-1'} gap-4`}>
-                    {
-                        itemView === 'grid' ?
-                        <>
-                        
-          {
-                  filteredProducts.slice(indexOfFirstItem ,indexOfLastItem).map((items,index)=>{
-                    
-                        const {productDescription,productName,
-productRating,productPrice,productImage,_id
-} = items
-                       return   <Productitem  key={index}
-                       setOpenProductDetailsModel={setOpenProductDetailsModel}
-                 productDescription={productDescription}
-                 productName = {productName} 
-                 productImage={productImage} 
-                 productID = {_id}
-                 
-                 productPrice={productPrice}
-                 index={index}
-                productRating={productRating}/>
-                  })
-                }
-                        
-                    
-                    
-                        </> 
-                         
-                        : 
-                        
-                        <>
-   {/* // this is List produt */}
-                        {
-                          filteredProducts.slice(indexOfFirstItem ,indexOfLastItem).map((items,index)=>{
-                               const {productDescription,productName,
-productRating,productPrice,productImage
-} = items
-                           return  <ProductitemListView 
-                           setOpenProductDetailsModel={setOpenProductDetailsModel} 
-                          key={index}
-                 productDescription={productDescription}
-                 productName = {productName} productImage={productImage} 
-                 productPrice={productPrice}
-                 index={index}
-                productRating={productRating}/>
-                          
-                          })
-                        }
-                       
-                      
-                        
-                        
-                        </>
-                       
-                        
-                      
-                    }
-                    
-                </div>
+            {/* Toolbar */}
+            <div className='bg-white p-3 rounded-lg shadow-sm mb-6 flex flex-wrap items-center justify-between gap-4'>
+              
+              {/* Left: View Toggle */}
+              <div className="flex items-center gap-2">
+                <Tooltip title="List View">
+                  <Button 
+                    onClick={() => setViewMode('list')}
+                    className={`!min-w-[40px] !w-[40px] !h-[40px] !rounded-full ${viewMode === 'list' ? '!bg-red-500 !text-white' : '!bg-gray-100 !text-black'}`}
+                  >
+                    <LuMenu />
+                  </Button>
+                </Tooltip>
                 
-                <div className='flex items-center justify-center mt-10'>
-                <Pagination 
-                page={page} onChange={handleChange} 
-                 color="primary" 
-                count={10} showFirstButton showLastButton />
+                <Tooltip title="Grid View">
+                  <Button 
+                    onClick={() => setViewMode('grid')}
+                    className={`!min-w-[40px] !w-[40px] !h-[40px] !rounded-full ${viewMode === 'grid' ? '!bg-red-500 !text-white' : '!bg-gray-100 !text-black'}`}
+                  >
+                    <IoGridSharp />
+                  </Button>
+                </Tooltip>
+                
+                <span className='text-sm text-gray-500 ml-2 hidden sm:block'>
+                  Showing {paginatedProducts.length} of {filteredProducts.length} products
+                </span>
+              </div>
 
-                </div>
+              {/* Right: Sort By */}
+              <div className="flex items-center gap-2 ml-auto">
+                <span className='text-sm text-gray-500'>Sort By:</span>
+                <Button
+                  onClick={handleSortClick}
+                  endIcon={<LiaAngleDownSolid />}
+                  className='!text-black !text-sm !font-medium !capitalize'
+                >
+                  {sortBy}
+                </Button>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={openSortMenu}
+                  onClose={() => handleSortClose(null)}
+                >
+                  {["Relevance", "A to Z", "Z to A", "Low to High", "High to Low"].map((option) => (
+                    <MenuItem key={option} onClick={() => handleSortClose(option)}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </div>
             </div>
-       </div>
-    </div>   
-    </section>
 
+            {/* Products Grid/List */}
+            <div className={`grid gap-5 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'}`}>
+              {paginatedProducts.length > 0 ? (
+                paginatedProducts.map((product, index) => {
+                   // Common Props
+                   const productProps = {
+                     key: product._id || index,
+                     index: index,
+                     productID: product._id,
+                     productName: product.productName,
+                     productPrice: product.productPrice,
+                     productDescription: product.productDescription,
+                     productImage: product.productImage,
+                     productRating: product.productRating,
+                     setOpenProductDetailsModel: setOpenProductDetailsModel
+                   };
 
+                   return viewMode === 'grid' 
+                     ? <Productitem {...productProps} /> 
+                     : <ProductitemListView {...productProps} />;
+                })
+              ) : (
+                <div className="col-span-full py-10 text-center text-gray-500">
+                   <Typography variant="h6">No products found.</Typography>
+                </div>
+              )}
+            </div>
+
+            {/* Pagination */}
+            {count > 1 && (
+              <div className='flex justify-center mt-10'>
+                <Pagination 
+                  count={count} 
+                  page={page} 
+                  onChange={handlePageChange} 
+                  color="primary" 
+                  shape="rounded"
+                  showFirstButton 
+                  showLastButton 
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Product Details Modal */}
+      <Dialog
+        open={openProductDetailsModel}
+        fullWidth={fullWidth}
+        maxWidth={maxWidth}
+        onClose={() => setOpenProductDetailsModel(false)}
+        classes={{ paper: 'rounded-xl overflow-hidden' }}
+      >
+        <DialogContent className='relative p-0'>
+          <Button 
+            className='!absolute top-4 right-4 !min-w-[35px] !w-[35px] !h-[35px] !rounded-full !bg-gray-100 !text-black z-10'
+            onClick={() => setOpenProductDetailsModel(false)}
+          >
+            <IoCloseSharp size={20} />
+          </Button>
+          
+          <div className="p-6">
+             <FilterProductDetail filteredProducts={filteredProducts} />
+          </div>
+        </DialogContent>
+      </Dialog>
 
     </div>
-    
-  
+  );
+};
 
-
-     <Dialog
-        open={openProductDetailsModel}
-        fullWidth = {fullWidth}
-        maxWidth = {maxWidth}
-        onClose={handleCloseProductDetailsModel}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description "
-        className='productDetailsModel'
-      >
-        
-        <DialogContent>
-          <div className='flex items-center w-full productDetailsModalContainer relative'>
-            <Button className='!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000]
-             !absolute top-[15px] right-[15px] !bg-[#f1f1f1]' onClick={handleCloseProductDetailsModel}>
-              <IoCloseSharp className='text-[20px]' />
-              </Button>
-            {/* <div className="col1 w-[40%]">
-             <ProductZoom/>
-            </div> */}
-             <div className="col2 w-[100%] py-8 px-8 pr-16 productContent">
-             <FilterProductDetail filteredProducts={filteredProducts}/>
-             </div>
-
-          </div>
-  </DialogContent>
-  </Dialog>
-    </>
-  )
-}
-
-export default ProductListing
+export default ProductListing;

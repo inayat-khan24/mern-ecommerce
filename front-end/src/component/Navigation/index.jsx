@@ -1,50 +1,47 @@
-import React, { useEffect, useState } from 'react'
-import Button  from '@mui/material/Button';
+import React, { useState } from 'react';
+import Button from '@mui/material/Button';
 import { RiMenu2Fill } from "react-icons/ri";
-import { LiaAngleDownSolid } from "react-icons/lia"
-import { GoRocket } from "react-icons/go";
-import { Link } from 'react-router-dom';
+import { LiaAngleDownSolid } from "react-icons/lia";
 import CategoryPanel from './CategoryPanel';
-import './style.css'
-import Category from './Category';
 import CategorySlider from './CategorySlider';
+import './style.css'; // Ensure this exists or remove if using Tailwind
 
 const Navigation = () => {
-  const [isOpenCatpanel,setIsOpenCatpanel] = useState(false)
-
-const openCategorypanel =()=>{
-  setIsOpenCatpanel(true);}
-
+  const [isOpenCatpanel, setIsOpenCatpanel] = useState(false);
 
   return (
-<>
-<nav >
-     <div className="container flex items-center justify-around   max-w-[150rem]  max-sm:max-w-[100rem]     max-sm:flex-col    gap-1">
-        <div className="col_1 w-[14%]  max-sm:w-full]">
-            <Button className='!text-black !text-[0.5rem] !font-[600] gap-2  w-full' onClick={openCategorypanel}>
-                <RiMenu2Fill  className='text-[18px]'/> Shop By Categories 
-                <LiaAngleDownSolid className='text-[13px] font-bold'/> </Button>
+    <>
+      <nav className="border-b border-gray-200 bg-white py-2">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-4">
+          
+          {/* Sidebar Trigger Button */}
+          <div className="w-full md:w-auto flex-shrink-0">
+            <Button 
+              onClick={() => setIsOpenCatpanel(true)}
+              className="!bg-[#ff5252] !text-white !font-semibold !text-xs !py-2 !px-4 !rounded-full !w-full md:!w-auto flex justify-between md:justify-center gap-2 shadow-md hover:!bg-[#e04040]"
+            >
+              <span className="flex items-center gap-2">
+                <RiMenu2Fill className='text-lg' /> Shop By Categories
+              </span>
+              <LiaAngleDownSolid className='text-sm' />
+            </Button>
+          </div>
+
+          {/* Category Slider - Takes remaining space */}
+          <div className="w-full md:flex-1 overflow-hidden min-w-0">
+            <CategorySlider />
+          </div>
+          
         </div>
-  <div className="col_2  w-[66%]  max-sm:w-[100%] ">
+      </nav>
 
-<CategorySlider />
-</div> 
-
-
-
-
-
-    </div>
-</nav>
-{/*  catefory panel component */}
-<CategoryPanel  isOpenCatpanel={isOpenCatpanel} 
-setIsOpenCatpanel={setIsOpenCatpanel}
-/>
-
-
-
-</>
-  )
-}
+      {/* Slide Out Panel */}
+      <CategoryPanel 
+        isOpenCatpanel={isOpenCatpanel} 
+        setIsOpenCatpanel={setIsOpenCatpanel}
+      />
+    </>
+  );
+};
 
 export default Navigation;

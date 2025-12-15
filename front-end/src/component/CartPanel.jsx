@@ -8,9 +8,11 @@ import { ThemeContext } from '../store/create';
 
 const CartPanel = () => {
     const {cartItems,DeleteItems,Total,allPrince} = useContext(ThemeContext)
+
+    
     
     const cartList =  cartItems.cartItems || []
-   const {totalPrice} = cartItems
+   const {totalprince} = cartItems
     if(cartList.length){
    <div>Emty Items </div>
     }
@@ -49,7 +51,7 @@ const CartPanel = () => {
 <div className='flex flex-col'>
       <div className='flex items-center justify-between w-full'>
                 <span className='text-[14px] font-[600]'>{`${cartList.length} iteam`}</span> 
-                <span className='text-[#ff5252] font-bold'>₹{totalPrice}</span>   
+                <span className='text-[#ff5252] font-bold'>₹{totalprince}</span>   
             </div>
      <div className='flex items-center justify-between w-full'>
                 <span className='text-[14px] font-[600]'>Shipping</span> 
@@ -60,7 +62,7 @@ const CartPanel = () => {
         flex items-center justify-between flex-col">
             <div className='flex items-center justify-between w-full'>
                 <span className='text-[14px] font-[600]'>Total (tax excl.)</span> 
-                <span className='text-[#ff5252] font-bold'>{totalPrice+60}</span>   
+                <span className='text-[#ff5252] font-bold'>{totalprince+60}</span>   
             </div>
             <br />
         <div className='flex items-center justify-between w-full gap-5'>
