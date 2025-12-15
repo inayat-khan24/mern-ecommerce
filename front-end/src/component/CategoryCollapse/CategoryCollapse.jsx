@@ -13,7 +13,7 @@ const CategoryCollapse = () => {
     setLoader(true);
     try {
       const res = await fetch(
-        "http://localhost:30045/api/getAllSubCategories"
+        "https://mern-ecommerce-8jrd.onrender.com/api/getAllSubCategories"
       );
       const result = await res.json();
       setCategoryList(result.subcategories);

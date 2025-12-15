@@ -8,7 +8,7 @@ import { ThemeContext } from '../store/create';
 const CheckOut = () => {
   const { cartItems, DeleteItems ,allPrince} = useContext(ThemeContext);
   const cartList = cartItems.cartItems || []
-  console.log(cartItems)
+
   const [user, setUser] = useState({
     fullName: '',
     email: '',
@@ -27,7 +27,7 @@ const CheckOut = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('User Details:', user);
+   
     // Submit the data to your server or state manager
   };
 
@@ -196,7 +196,7 @@ const CheckOut = () => {
                   total
 
                 } = cartProduct;
-                console.log(cartProduct)
+                
                 return (
                   <CartPanelIItems
                     key={index}

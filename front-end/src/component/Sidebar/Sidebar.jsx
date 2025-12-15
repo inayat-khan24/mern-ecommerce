@@ -26,7 +26,7 @@ const Sidebar = ({ selectedCategories, setSelectedCategories }) => {
   useEffect(() => {
     const fetchCategory = async () => {
       try {
-        const res = await fetch("http://localhost:30045/api/getAllSubCategories");
+        const res = await fetch("https://mern-ecommerce-8jrd.onrender.com/api/getAllSubCategories");
         const result = await res.json();
         setShopbyCategoryList(result.subcategories || []);
       } catch (error) {

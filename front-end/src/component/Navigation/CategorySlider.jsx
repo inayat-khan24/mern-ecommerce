@@ -12,7 +12,7 @@ const CategorySlider = () => {
 
   const fetchCategory = async () => {
     try {
-      const res = await fetch(`http://localhost:30045/api/getAllCategories`);
+      const res = await fetch(`https://mern-ecommerce-8jrd.onrender.com/api/getAllCategories`);
       const result = await res.json();
       setCategoryList(result.data || []);
     } catch (error) {

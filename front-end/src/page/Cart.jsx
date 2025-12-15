@@ -24,8 +24,7 @@ const CartPage = () => {
     cartListFetch();
   }, []);
 
-console.log( "caryItems",cartItems )
-  console.log( "total",cartItems.totalprince)
+
   // --- Empty Cart View ---
   if (!cartList.length) {
     return (

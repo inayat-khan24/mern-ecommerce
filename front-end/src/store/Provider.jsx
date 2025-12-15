@@ -30,7 +30,7 @@ const Provider = ({ children }) => {
 // fetch all product
   const [items,setItems] = useState([])
 
-  const API_BASE_URL = "http://localhost:30045";
+  const API_BASE_URL = "https://mern-ecommerce-8jrd.onrender.com";
    const fetchDetails = async()=>{
    try {
      const res = await fetch(`${API_BASE_URL}/api/product_getall`)

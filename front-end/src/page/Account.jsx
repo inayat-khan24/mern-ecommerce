@@ -12,7 +12,7 @@ const MyAccount = () => {
    const userId = localStorage.getItem("userID");
     const token = localStorage.getItem("token");
 
-const API_BASE_URL = "http://localhost:30045";
+const API_BASE_URL = "https://mern-ecommerce-8jrd.onrender.com";
 
   const fetchUserInfo = async () => {
    

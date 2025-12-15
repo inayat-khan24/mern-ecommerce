@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 
 // MUI Imports
 import { 
-  Typography, Breadcrumbs, Link, Button, Menu, MenuItem, 
-  Pagination, Dialog, DialogContent, Tooltip, useMediaQuery, Box 
+  Typography, Breadcrumbs, Button, Menu, MenuItem, 
+  Pagination, Dialog, DialogContent, Tooltip, useMediaQuery, IconButton 
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
@@ -26,13 +26,14 @@ import { ThemeContext } from '../store/create';
 // --- Helper: Sort Logic ---
 const sortProducts = (products, sortKey) => {
   const sorted = [...products];
-  switch (sortKey.replace(/\s+/g, '').toLowerCase()) {
-    case 'lowtohigh': return sorted.sort((a, b) => a.productPrice - b.productPrice);
-    case 'hightolow': return sorted.sort((a, b) => b.productPrice - a.productPrice);
-    case 'atoz': return sorted.sort((a, b) => a.productName.localeCompare(b.productName));
-    case 'ztoa': return sorted.sort((a, b) => b.productName.localeCompare(a.productName));
-    default: return sorted; // Relevance
-  }
+  const key = sortKey.replace(/\s+/g, '').toLowerCase();
+  
+  if (key === 'lowtohigh') return sorted.sort((a, b) => a.productPrice - b.productPrice);
+  if (key === 'hightolow') return sorted.sort((a, b) => b.productPrice - a.productPrice);
+  if (key === 'atoz') return sorted.sort((a, b) => a.productName.localeCompare(b.productName));
+  if (key === 'ztoa') return sorted.sort((a, b) => b.productName.localeCompare(a.productName));
+  
+  return sorted; // Relevance
 };
 
 const ProductListing = () => {
@@ -46,7 +47,7 @@ const ProductListing = () => {
     fullWidth, maxWidth 
   } = useContext(ThemeContext);
 
-  
+  const { category: routeCategory } = useParams();
 
   // --- Local State ---
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
@@ -55,7 +56,7 @@ const ProductListing = () => {
   
   // Pagination
   const [page, setPage] = useState(1);
-  const itemsPerPage = viewMode === 'list' ? 5 : 8; // Dynamic per page based on view
+  const itemsPerPage = viewMode === 'list' ? 6 : 8; // Dynamic per page
 
   // Modals / Drawers
   const [openProductDetailsModel, setOpenProductDetailsModel] = useState(false);
@@ -66,7 +67,6 @@ const ProductListing = () => {
   const openSortMenu = Boolean(anchorEl);
 
   // --- Filtering Logic (useMemo) ---
-  // This automatically recalculates whenever dependencies change, no useEffect needed.
   const filteredProducts = useMemo(() => {
     let result = [...items];
 
@@ -121,17 +121,15 @@ const ProductListing = () => {
     <div className='w-full bg-[#f4f5f7] min-h-screen pb-10'>
       
       {/* 1. Navbar */}
-      <section className='bg-white shadow-sm'>
-        <div className="container mx-auto">
-          <Navigation />
-        </div>
+      <section className='bg-white shadow-sm sticky top-0 z-40'>
+        <Navigation />
       </section>
 
       {/* 2. Breadcrumbs */}
       <div className='container mx-auto px-4 py-4'>
         <Breadcrumbs aria-label="breadcrumb">
-          <Link underline="hover" color="inherit" href="/">Home</Link>
-          <Link underline="hover" color="inherit" href="/fashion">Fashion</Link>
+          <Link underline="hover" color="inherit" href="/" className='hover:text-[#ff5252]'>Home</Link>
+          <Link underline="hover" color="inherit" href="/fashion" className='hover:text-[#ff5252]'>Fashion</Link>
           <Typography color="text.primary">Products</Typography>
         </Breadcrumbs>
       </div>
@@ -143,7 +141,7 @@ const ProductListing = () => {
           {/* --- Left Sidebar (Filters) --- */}
           <div className='w-full md:w-[25%] lg:w-[20%]'>
             {isDesktop ? (
-              <div className="bg-white rounded-lg shadow-sm overflow-hidden h-fit sticky top-4">
+              <div className="bg-white rounded-lg shadow-sm overflow-hidden h-fit sticky top-[80px]">
                 <Sidebar 
                   setSelectedCategories={setSelectedCategories}
                   selectedCategories={selectedCategories}
@@ -152,13 +150,12 @@ const ProductListing = () => {
             ) : (
               // Mobile Filter Toggle
               <Button 
-                variant="contained"
-                color="inherit"
-                className='w-full !justify-between !bg-white !text-black !py-2'
+                variant="outlined"
+                className='w-full !justify-between !bg-white !text-gray-700 !py-2 !border-gray-300'
                 onClick={() => setIsOpenCatpanelFilter(true)}
               >
-                <span className='flex items-center gap-2'>
-                  <RiMenu2Fill /> Filters
+                <span className='flex items-center gap-2 font-semibold'>
+                  <RiMenu2Fill /> Filter Products
                 </span>
                 <LiaAngleDownSolid />
               </Button>
@@ -169,6 +166,8 @@ const ProductListing = () => {
               <CategoryPanelProduct 
                 isOpenCatpanelFilter={isOpenCatpanelFilter} 
                 setIsOpenCatpanelFilter={setIsOpenCatpanelFilter}
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
               />
             )}
           </div>
@@ -177,7 +176,7 @@ const ProductListing = () => {
           <div className='w-full md:w-[75%] lg:w-[80%]'>
             
             {/* Toolbar */}
-            <div className='bg-white p-3 rounded-lg shadow-sm mb-6 flex flex-wrap items-center justify-between gap-4'>
+            <div className='bg-white p-3 rounded-lg shadow-sm mb-6 flex flex-wrap items-center justify-between gap-4 border border-gray-100'>
               
               {/* Left: View Toggle */}
               <div className="flex items-center gap-2">
@@ -206,11 +205,11 @@ const ProductListing = () => {
 
               {/* Right: Sort By */}
               <div className="flex items-center gap-2 ml-auto">
-                <span className='text-sm text-gray-500'>Sort By:</span>
+                <span className='text-sm text-gray-500 hidden sm:block'>Sort By:</span>
                 <Button
                   onClick={handleSortClick}
                   endIcon={<LiaAngleDownSolid />}
-                  className='!text-black !text-sm !font-medium !capitalize'
+                  className='!text-black !text-sm !font-medium !capitalize !bg-gray-50 px-4'
                 >
                   {sortBy}
                 </Button>
@@ -232,9 +231,8 @@ const ProductListing = () => {
             <div className={`grid gap-5 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'}`}>
               {paginatedProducts.length > 0 ? (
                 paginatedProducts.map((product, index) => {
-                   // Common Props
+                   // ✅ KEY REMOVED FROM HERE
                    const productProps = {
-                     key: product._id || index,
                      index: index,
                      productID: product._id,
                      productName: product.productName,
@@ -246,12 +244,19 @@ const ProductListing = () => {
                    };
 
                    return viewMode === 'grid' 
-                     ? <Productitem {...productProps} /> 
-                     : <ProductitemListView {...productProps} />;
+                     // ✅ KEY ADDED HERE DIRECTLY
+                     ? <Productitem key={product._id || index} {...productProps} /> 
+                     : <ProductitemListView key={product._id || index} {...productProps} />;
                 })
               ) : (
                 <div className="col-span-full py-10 text-center text-gray-500">
                    <Typography variant="h6">No products found.</Typography>
+                   <Button 
+                    className='!mt-2 !text-red-500 !capitalize' 
+                    onClick={() => setSelectedCategories([])}
+                   >
+                     Clear Filters
+                   </Button>
                 </div>
               )}
             </div>
