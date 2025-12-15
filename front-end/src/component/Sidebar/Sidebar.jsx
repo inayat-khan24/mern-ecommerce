@@ -32,8 +32,8 @@ const size = ["Small (17)","Medium (10)","Large (25)","XL (1)","XXL (3)"]
         "http://localhost:30045/api/getAllSubCategories"
       )
       const result = await res.json()
-
-      setShopbyCategoryList(result)
+console.log(result)
+      setShopbyCategoryList(result.subcategories)
     } catch (error) {
       console.log(error)
     }
